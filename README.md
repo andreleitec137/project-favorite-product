@@ -36,19 +36,19 @@
 ### 1.Na raiz do projeto
         docker-compose build
         docker-compose up -d
+        docker-compose up migrate
 
         Isso irá:
 
         Subir o container Postgres em localhost:5432
         Subir o container app NestJS em localhost:3000
-        Executar as migrations automaticamente no container de migração
+        Executar as migrations no container de migração
 
 ### 2. Criar usuário administrador inicial
         Usei uma CLI interna para criar o primeiro usuário que irá gerar o token JWT.
 
         # Dentro do container ap rode: 
-        docker-compose exec nest \
-        npm run create-user -- admin@aiqfome.com SuperSenha123
+        docker-compose exec nest npm run create-user-cli -- --email=admin@aiqfome.com --password=123456
 
         Isso cria um usuário com role admin e imprime o token JWT no console.
 
