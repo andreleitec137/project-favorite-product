@@ -2,10 +2,11 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { FavoriteProductDTO } from 'src/application/products/dto/favorite-product.dto';
+import { env } from 'src/config/env';
 
 @Injectable()
 export class ProductService {
-  private readonly base = 'https://fakestoreapi.com/products';
+  private readonly base = env.PRODUCT_URL;
 
   constructor(private readonly http: HttpService) {}
 
