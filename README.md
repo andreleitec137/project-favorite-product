@@ -54,7 +54,7 @@
 
 ### 3. Consumir a API
 
-    Acesse POST /auth/login com JSON { "email": "admin@aiqfome.com", "password": "SuperSenha123" } para obter access_token.
+    Acesse POST /auth/user/login com JSON { "email": "admin@aiqfome.com", "password": "123456" } para obter access_token.
 
     Em Authorization: Bearer <token>, você pode então:
 
