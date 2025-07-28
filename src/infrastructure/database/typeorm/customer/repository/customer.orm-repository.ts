@@ -13,14 +13,14 @@ import { FavoriteProductsOrmEntity } from '../../favorite-product/entity/favorit
 export class CustomerOrmRepository implements CustomerRepository {
   constructor(
     @InjectRepository(CustomerOrmEntity)
-    private readonly ormRepo: Repository<CustomerOrmEntity>,
+    private readonly ormRepository: Repository<CustomerOrmEntity>,
     @InjectRepository(FavoriteProductsOrmEntity)
-    private readonly favRepo: Repository<FavoriteProductsOrmEntity>,
+    private readonly favoriteRepository: Repository<FavoriteProductsOrmEntity>,
   ) {}
 
   async create(data: CreateCustomerInputDTO): Promise<CustomerEntity> {
-    const orm = this.ormRepo.create({ ...data });
-    const saved = await this.ormRepo.save(orm);
+    const orm = this.ormRepository.create({ ...data });
+    const saved = await this.ormRepository.save(orm);
     return CustomerMapper.toDomain(saved);
   }
 
@@ -28,56 +28,56 @@ export class CustomerOrmRepository implements CustomerRepository {
     id: string,
     data: UpdateCustomerInputDTO,
   ): Promise<CustomerEntity> {
-    await this.ormRepo.update(id, data);
-    const updated = await this.ormRepo.findOneBy({ id });
+    await this.ormRepository.update(id, data);
+    const updated = await this.ormRepository.findOneBy({ id });
     if (!updated) throw new Error('Customer not found');
     return CustomerMapper.toDomain(updated);
   }
 
   async findOne(id: string): Promise<CustomerEntity | null> {
-    const orm = await this.ormRepo.findOneBy({ id });
+    const orm = await this.ormRepository.findOneBy({ id });
     return orm ? CustomerMapper.toDomain(orm) : null;
   }
 
   async findByEmail(email: string): Promise<CustomerEntity | null> {
-    const orm = await this.ormRepo.findOneBy({ email });
+    const orm = await this.ormRepository.findOneBy({ email });
     return orm ? CustomerMapper.toDomain(orm) : null;
   }
 
   async findMany(): Promise<CustomerEntity[]> {
-    const customers = await this.ormRepo.find();
+    const customers = await this.ormRepository.find();
     return customers.map((customer) => CustomerMapper.toDomain(customer));
   }
 
   async delete(id: string): Promise<void> {
-    await this.ormRepo.delete(id);
+    await this.ormRepository.delete(id);
   }
 
   async addFavorite(customerId: string, productId: number): Promise<void> {
-    const fav = this.favRepo.create({ customerId, productId });
-    await this.favRepo.save(fav);
+    const favorite = this.favoriteRepository.create({ customerId, productId });
+    await this.favoriteRepository.save(favorite);
   }
 
   async getFavoriteByCustomerAndProductId(
     customerId: string,
     productId: number,
   ): Promise<FavoriteProductsOrmEntity | null> {
-    const fav = await this.favRepo.findOne({
+    const favorite = await this.favoriteRepository.findOne({
       where: {
         customerId,
         productId,
       },
     });
 
-    return fav;
+    return favorite;
   }
 
   async removeFavorite(id: string): Promise<void> {
-    await this.favRepo.delete({ id });
+    await this.favoriteRepository.delete({ id });
   }
 
   async listFavorites(customerId: string): Promise<number[]> {
-    const favs = await this.favRepo.find({
+    const favs = await this.favoriteRepository.find({
       where: { customerId },
       select: ['productId'],
     });

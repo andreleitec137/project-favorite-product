@@ -1,5 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { AuthInputDTO } from 'src/application/auth/dto/auth.input.dto';
+import { AuthOutputDTO } from 'src/application/auth/dto/auth.output.dto';
 import { UserRepository } from 'src/domain/user/repository/user.repository';
 import { JwtPayload } from 'src/infrastructure/core/auth/jwt.types';
 import { HashService } from 'src/infrastructure/core/hash/hash.service';
@@ -13,10 +15,7 @@ class AuthenticationUserUseCase {
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(
-    email: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async execute({ email, password }: AuthInputDTO): Promise<AuthOutputDTO> {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) throw new BadRequestException('Invalid credentials');

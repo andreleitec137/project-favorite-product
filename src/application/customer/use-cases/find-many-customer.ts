@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CustomerRepository } from 'src/domain/customer/repository/customer.repository';
 import { CustomerOutputDTO } from '../dto/customer.output.dto';
-import { FindManyCustomerInputDTO } from '../dto/find-many-customer.input.dto';
 
 @Injectable()
 class FindManyCustomerUseCase {
@@ -10,10 +9,8 @@ class FindManyCustomerUseCase {
     private readonly customerRepository: CustomerRepository,
   ) {}
 
-  async execute(
-    params?: FindManyCustomerInputDTO,
-  ): Promise<CustomerOutputDTO[]> {
-    const customers = await this.customerRepository.findMany(params);
+  async execute(): Promise<CustomerOutputDTO[]> {
+    const customers = await this.customerRepository.findMany();
 
     return customers.map((customer) => ({
       id: customer.id,
