@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nestdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  nest:
+    build: .
+    container_name: nest_app
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    command: sh -c "npm install && npm run start:dev"
+
+  migrate:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    command: >
+      sh -c "
+        npm install &&
+        npm run migration:run
+      "
+
+volumes:
+  pgdata:
